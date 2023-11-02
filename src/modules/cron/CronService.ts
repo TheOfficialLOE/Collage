@@ -12,6 +12,6 @@ export class CronService implements OnModuleInit {
 
   async onModuleInit() {
     console.log("init")
-    await this.cronQueue.add({}, { repeat: { cron: "*" }})
+    await this.cronQueue.add({}, { repeat: { cron: "* * * *" }})
   }
 }
