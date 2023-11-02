@@ -44,4 +44,37 @@ export class CollageService {
       }
     });
   }
+
+  async getAllRequests(userId: string) {
+    return await this.prismaService.collage.findMany({
+      where: {
+        userId
+      },
+      select: {
+        id: true,
+        requestedAt: true,
+        status: true,
+        collageUrl: true,
+        completedAt: true,
+      },
+      orderBy: {
+        requestedAt: "desc"
+      }
+    });
+  }
+
+  async getRequestById(requestId: string) {
+    return await this.prismaService.collage.findUnique({
+      where: {
+        id: requestId
+      },
+      select: {
+        id: true,
+        requestedAt: true,
+        status: true,
+        collageUrl: true,
+        completedAt: true,
+      }
+    });
+  }
 }

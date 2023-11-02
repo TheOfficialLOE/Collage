@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UploadedFiles, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, UploadedFiles, UseInterceptors } from "@nestjs/common";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { InjectQueue } from "@nestjs/bull";
 import { Queue } from "bull";
@@ -50,7 +50,23 @@ export class CollageController {
         requestId,
         ...body,
       }
-    });
+    }, { delay: 10000 });
     return "started the process"
+  }
+
+  @Get()
+  @Protected()
+  async getAllRequests(
+    @ExtractFieldFromToken("id") userId: string,
+  ) {
+    return await this.collageService.getAllRequests(userId);
+  }
+
+  @Get(":id")
+  @Protected()
+  async getUniqueRequest(
+    @Param('id') requestId: string
+  ) {
+    return await this.collageService.getRequestById(requestId);
   }
 }
