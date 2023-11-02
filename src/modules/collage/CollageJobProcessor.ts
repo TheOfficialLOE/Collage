@@ -29,13 +29,13 @@ export class CollageJobProcessor {
       margin: data.properties.border, color:
       data.properties.color
     });
-    await this.uploadService.uploadFile(await collage.png().toBuffer(), data.properties.requestId + "-" + generateRandomString() + ".png");
-    await this.collageService.changeRequestStatus(data.properties.requestId, "DONE");
+    const collageUrl = await this.uploadService.uploadFile(await collage.png().toBuffer(), data.properties.requestId + "-" + generateRandomString() + ".png");
+    await this.collageService.markRequestDone(data.properties.requestId, collageUrl)
   }
 
   @OnQueueFailed()
-  async handleError({ data }: Job, error: Error) {
+  async handleError({ data }: Job<IJobPayload>, error: Error) {
     console.log(error);
-    await this.collageService.changeRequestStatus(data.properties.requestId, "ERROR");
+    await this.collageService.markRequestFailed(data.properties.requestId);
   }
 }

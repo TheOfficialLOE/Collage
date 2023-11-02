@@ -20,13 +20,27 @@ export class CollageService {
     });
   }
 
-  async changeRequestStatus(requestId: string, status: "PENDING" | "ERROR" | "DONE") {
+  async markRequestDone(requestId: string, collageUrl: string) {
     await this.prismaService.collage.update({
       where: {
         id: requestId
       },
       data: {
-        status
+        status: "DONE",
+        collageUrl,
+        completedAt: new Date()
+      }
+    });
+  }
+
+  async markRequestFailed(requestId: string) {
+    await this.prismaService.collage.update({
+      where: {
+        id: requestId
+      },
+      data: {
+        status: "FAILED",
+        completedAt: new Date()
       }
     });
   }

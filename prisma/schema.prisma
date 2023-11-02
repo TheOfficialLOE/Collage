@@ -25,7 +25,7 @@ model Collage {
   border      Int
   color       String
   status      CollageRequestStatus @default(PENDING)
-  resultUrl   String?
+  collageUrl  String?
   completedAt DateTime?
   user        Users                @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
@@ -37,6 +37,6 @@ enum CollageDirection {
 
 enum CollageRequestStatus {
   PENDING
-  ERROR
+  FAILED
   DONE
 }
