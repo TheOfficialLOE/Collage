@@ -1,6 +1,6 @@
 
 //todo
-export class AuthDTO {
+export class AuthRequestDTO {
   username: string;
   password: string;
 }

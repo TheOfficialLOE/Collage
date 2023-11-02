@@ -4,13 +4,14 @@ import { JwtModule } from "@nestjs/jwt";
 import { JwtStrategy } from "../../shared/strategy/JwtStrategy";
 import { AuthService } from "./AuthService";
 import { PrismaModule } from "../../shared/prisma/PrismaModule";
+import { ServerConfig } from "../../shared/config/ServerConfig";
 
 
 @Module({
   imports: [
     JwtModule.register({
       global: true,
-      secret: "secret"
+      secret: ServerConfig.ACCESS_TOKEN_SECRET
     }),
     PrismaModule
   ],

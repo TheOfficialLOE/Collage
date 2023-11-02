@@ -11,6 +11,32 @@ datasource db {
 }
 
 model Users {
-  username String @unique
+  id       String    @id @default(cuid())
+  username String    @unique
   password String
+  Collages Collage[]
+}
+
+model Collage {
+  id          String               @id @default(cuid())
+  userId      String
+  requestedAt DateTime             @default(now())
+  direction   CollageDirection     @default(HORIZONTAL)
+  border      Int
+  color       String
+  status      CollageRequestStatus @default(PENDING)
+  resultUrl   String?
+  completedAt DateTime?
+  user        Users                @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+enum CollageDirection {
+  VERTICAL
+  HORIZONTAL
+}
+
+enum CollageRequestStatus {
+  PENDING
+  ERROR
+  DONE
 }

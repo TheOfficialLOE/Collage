@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../../shared/prisma/PrismaService";
-import { AuthDTO } from "./AuthDTO";
+import { AuthRequestDTO } from "./AuthRequestDTO";
 import * as bcrypt from "bcrypt";
 
 
@@ -11,12 +11,12 @@ export class AuthService {
     private readonly prismaService: PrismaService
   ) {}
 
-  async createUserOrThrow({ username, password }: AuthDTO) {
+  async createUserOrThrow({ username, password }: AuthRequestDTO) {
     // todo
     if (await this.findUser(username))
       throw "conflict";
     const hashedPassword = await bcrypt.hash(password, 10);
-    await this.prismaService.users.create({
+    return await this.prismaService.users.create({
       data: {
         username,
         password: hashedPassword
@@ -32,15 +32,15 @@ export class AuthService {
     });
   }
 
-  async loginUserOrThrow({ username, password }: AuthDTO) {
+  async loginUserOrThrow({ username, password }: AuthRequestDTO) {
     const user = await this.findUser(username);
-    //todo
+    // todo
     if (!user)
       throw "not found";
     const succeedInCompare = await bcrypt.compare(password, user.password);
-    //todo
+    // todo
     if (!succeedInCompare)
       throw "wrong password";
-    return true;
+    return user;
   }
 }
