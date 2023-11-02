@@ -45,6 +45,24 @@ export class CollageService {
     });
   }
 
+  async removeAllPendingRequests(userId: string) {
+    await this.prismaService.collage.deleteMany({
+      where: {
+        userId,
+        status: "PENDING"
+      },
+    });
+  }
+
+  async removePendingRequestById(requestId: string) {
+    await this.prismaService.collage.delete({
+      where: {
+        id: requestId,
+        status: "PENDING"
+      }
+    });
+  }
+
   async getAllRequests(userId: string) {
     return await this.prismaService.collage.findMany({
       where: {
@@ -56,6 +74,21 @@ export class CollageService {
         status: true,
         collageUrl: true,
         completedAt: true,
+      },
+      orderBy: {
+        requestedAt: "desc"
+      }
+    });
+  }
+
+  async getAllPendingRequestsIds(userId: string) {
+    return await this.prismaService.collage.findMany({
+      where: {
+        userId,
+        status: "PENDING"
+      },
+      select: {
+        id: true,
       },
       orderBy: {
         requestedAt: "desc"

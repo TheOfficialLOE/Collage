@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UploadedFiles, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, UploadedFiles, UseInterceptors } from "@nestjs/common";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { InjectQueue } from "@nestjs/bull";
 import { Queue } from "bull";
@@ -50,8 +50,29 @@ export class CollageController {
         requestId,
         ...body,
       }
-    }, { delay: 10000 });
+    }, { jobId: requestId, delay: 30000 });
     return "started the process"
+  }
+
+  @Delete()
+  @Protected()
+  async cancelAllPendingRequests(
+    @ExtractFieldFromToken("id") userId: string,
+  ) {
+    const pendingRequestsIds = await this.collageService.getAllPendingRequestsIds(userId);
+    for (const { id } of pendingRequestsIds) {
+      await this.collageQueue.removeJobs(id);
+    }
+    await this.collageService.removeAllPendingRequests(userId);
+  }
+
+  @Delete(":id")
+  @Protected()
+  async cancelUniquePendingRequest(
+    @Param('id') requestId: string
+  ) {
+    await this.collageService.removePendingRequestById(requestId);
+    await this.collageQueue.removeJobs(requestId)
   }
 
   @Get()
