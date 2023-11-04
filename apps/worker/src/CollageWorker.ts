@@ -20,7 +20,7 @@ export class CollageWorker {
   async process({ data }: Job<IJobPayload>) {
     const resizedImageBuffers: Buffer[] = [];
     for (const imagePath of data.images) {
-      const resizedImage = await sharp(path.resolve(imagePath))
+      const resizedImage = await sharp(await this.uploadService.getFileBody(imagePath))
         .resize(150, 150).toBuffer();
       resizedImageBuffers.push(resizedImage);
     }
@@ -30,7 +30,7 @@ export class CollageWorker {
       margin: data.properties.border, color:
       data.properties.color
     });
-    const collageUrl = await this.uploadService.uploadFile(await collage.png().toBuffer(), data.properties.requestId + "-" + generateRandomString() + ".png");
+    const collageUrl = await this.uploadService.uploadFile(await collage.png().toBuffer(), "collage/" + data.properties.requestId + "-" + generateRandomString() + ".png");
     await this.collageService.markRequestDone(data.properties.requestId, collageUrl)
   }
 

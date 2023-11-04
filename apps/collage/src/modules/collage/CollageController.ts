@@ -10,6 +10,9 @@ import { IJobPayload } from "./IJobPayload";
 import { diskStorage } from "multer";
 import * as path from "path";
 import { generateRandomString } from "../../shared/util/generateRandomString";
+import * as multerS3 from "multer-s3";
+import { s3Client } from "../../shared/util/s3Client";
+import { ServerConfig } from "../../shared/config/ServerConfig";
 
 @Controller("collage")
 export class CollageController {
@@ -21,14 +24,15 @@ export class CollageController {
   @Post()
   @Protected()
   @UseInterceptors(FilesInterceptor("images", 3, {
-    storage: diskStorage({
-      destination: "tmp",
-      filename: (req, file, callback) => {
+    storage: multerS3({
+      s3: s3Client,
+      bucket: ServerConfig.BUCKET_NAME,
+      key(req: Express.Request, file: Express.Multer.File, callback: (error: any, key?: string) => void) {
         const { name: filename, ext: extname } = path.parse(path.basename(file.originalname));
         const randomName = generateRandomString();
-        callback(null,  filename + "-" + randomName + extname)
+        callback(null,  "tmp/" + filename + "-" + randomName + extname)
       }
-    }),
+    })
   }))
   async requestCollage(
     @UploadedFiles() images: Array<Express.Multer.File>,
@@ -45,7 +49,7 @@ export class CollageController {
     });
 
     await this.collageQueue.add({
-      images: images.map(image => image.path),
+      images: images.map(image => image["key"]),
       properties: {
         requestId,
         ...body,

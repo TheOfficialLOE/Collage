@@ -9,6 +9,7 @@ import {
 import { ServerConfig } from "../../shared/config/ServerConfig";
 import { getSignedUrl as getS3SignedUrl } from "@aws-sdk/s3-request-presigner";
 import * as moment from "moment";
+import { s3Client } from "../../shared/util/s3Client";
 
 
 @Injectable()
@@ -17,14 +18,7 @@ export class UploadService {
   private readonly bucket = ServerConfig.BUCKET_NAME;
 
   constructor() {
-    this.s3Client = new S3Client({
-      region: "default",
-      endpoint: ServerConfig.BUCKET_ENDPOINT,
-      credentials: {
-        accessKeyId: ServerConfig.BUCKET_ACCESS_KEY,
-        secretAccessKey: ServerConfig.BUCKET_SECRET_KEY
-      }
-    });
+    this.s3Client = s3Client;
   }
 
   async uploadFile(file: Buffer, fileName: string): Promise<string> {
@@ -34,6 +28,14 @@ export class UploadService {
       Key: fileName
     }));
     return await this.getSignedUrl(fileName);
+  }
+
+  async getFileBody(fileName: string) {
+    const object = await this.s3Client.send(new GetObjectCommand({
+      Bucket: this.bucket,
+      Key: fileName
+    }));
+    return object.Body.transformToByteArray();
   }
 
   async removeOldFiles() {
@@ -65,7 +67,7 @@ export class UploadService {
 
   private async getSignedUrl(fileName: string): Promise<string> {
     return await getS3SignedUrl(this.s3Client, new GetObjectCommand({
-      Bucket: ServerConfig.BUCKET_NAME,
+      Bucket: this.bucket,
       Key: fileName
     }));
   }
