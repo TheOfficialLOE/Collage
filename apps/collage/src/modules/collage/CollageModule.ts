@@ -2,7 +2,6 @@ import { Module } from "@nestjs/common";
 import { CollageController } from "./CollageController";
 import { BullModule } from "@nestjs/bull";
 import { ServerConfig } from "../../shared/config/ServerConfig";
-import { CollageJobProcessor } from "./CollageJobProcessor";
 import { PrismaModule } from "../../shared/prisma/PrismaModule";
 import { CollageService } from "./CollageService";
 import { UploadService } from "./UploadService";
@@ -21,6 +20,6 @@ import { UploadService } from "./UploadService";
     }),
   ],
   controllers: [CollageController],
-  providers: [CollageService, CollageJobProcessor, UploadService]
+  providers: [CollageService, UploadService]
 })
 export class CollageModule {}

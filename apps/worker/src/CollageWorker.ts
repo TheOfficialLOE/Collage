@@ -1,21 +1,22 @@
 import { OnQueueFailed, Process, Processor } from "@nestjs/bull";
+import { CollageService } from "../../collage/src/modules/collage/CollageService";
+import { UploadService } from "../../collage/src/modules/collage/UploadService";
 import { Job } from "bull";
-import { IJobPayload } from "./IJobPayload";
+import { IJobPayload } from "../../collage/src/modules/collage/IJobPayload";
 import * as sharp from "sharp";
 import * as path from "path";
-import joinImages from 'join-images';
-import { CollageService } from "./CollageService";
-import { UploadService } from "./UploadService";
-import { generateRandomString } from "../../shared/util/generateRandomString";
+import joinImages from "join-images";
+import { generateRandomString } from "../../collage/src/shared/util/generateRandomString";
+
 
 @Processor("collage")
-export class CollageJobProcessor {
+export class CollageWorker {
   constructor(
     private readonly collageService: CollageService,
     private readonly uploadService: UploadService,
   ) {}
 
-  @Process({ concurrency: 1 })
+  @Process()
   async process({ data }: Job<IJobPayload>) {
     const resizedImageBuffers: Buffer[] = [];
     for (const imagePath of data.images) {
@@ -35,7 +36,6 @@ export class CollageJobProcessor {
 
   @OnQueueFailed()
   async handleError({ data }: Job<IJobPayload>, error: Error) {
-    console.log(error);
     await this.collageService.markRequestFailed(data.properties.requestId);
   }
 }

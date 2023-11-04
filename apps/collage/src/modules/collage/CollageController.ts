@@ -50,7 +50,7 @@ export class CollageController {
         requestId,
         ...body,
       }
-    }, { jobId: requestId, delay: 30000 });
+    }, { jobId: requestId });
     return "started the process"
   }
 

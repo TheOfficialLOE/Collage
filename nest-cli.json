@@ -1,8 +1,32 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
+  "sourceRoot": "apps/collage/src",
   "compilerOptions": {
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/collage/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/collage",
+  "projects": {
+    "collage": {
+      "type": "application",
+      "root": "apps/collage",
+      "entryFile": "main",
+      "sourceRoot": "apps/collage/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/collage/tsconfig.app.json"
+      }
+    },
+    "worker": {
+      "type": "application",
+      "root": "apps/worker",
+      "entryFile": "main",
+      "sourceRoot": "apps/worker/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/worker/tsconfig.app.json"
+      }
+    }
   }
 }

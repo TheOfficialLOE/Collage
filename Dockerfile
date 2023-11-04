@@ -5,7 +5,8 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install
 COPY . .
-RUN pnpm build
+RUN npx nest build collage
+RUN npx nest build worker
 RUN pnpm db:generate
 EXPOSE 3000
-CMD ["pnpm", "start"]
+CMD ["npx", "nest", "start", "worker"]
