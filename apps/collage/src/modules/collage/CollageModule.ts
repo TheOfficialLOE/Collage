@@ -20,6 +20,7 @@ import { UploadService } from "./UploadService";
     }),
   ],
   controllers: [CollageController],
-  providers: [CollageService, UploadService]
+  providers: [CollageService, UploadService],
+  exports: [CollageService, UploadService]
 })
 export class CollageModule {}

@@ -2,9 +2,8 @@ import { Module } from '@nestjs/common';
 import { BullModule } from "@nestjs/bull";
 import { ServerConfig } from "../../collage/src/shared/config/ServerConfig";
 import { CollageWorker } from "./CollageWorker";
-import { CollageService } from "../../collage/src/modules/collage/CollageService";
-import { UploadService } from "../../collage/src/modules/collage/UploadService";
 import { PrismaModule } from "../../collage/src/shared/prisma/PrismaModule";
+import { CollageModule } from "../../collage/src/modules/collage/CollageModule";
 
 @Module({
   imports: [
@@ -17,8 +16,9 @@ import { PrismaModule } from "../../collage/src/shared/prisma/PrismaModule";
       },
     }),
     PrismaModule,
+    CollageModule
   ],
   controllers: [],
-  providers: [CollageWorker, CollageService, UploadService],
+  providers: [CollageWorker],
 })
 export class WorkerModule {}

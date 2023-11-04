@@ -11,6 +11,7 @@ services:
       - tmp:/app/tmp
     depends_on:
       - worker
+    restart: always
     command: ["npx", "nest", "start", "collage"]
 
   worker:
@@ -19,6 +20,7 @@ services:
       - .env
     volumes:
       - tmp:/app/tmp
+    restart: always
     command: ["npx", "nest", "start", "worker"]
 
 
