@@ -12,7 +12,7 @@ services:
     depends_on:
       - worker
     restart: always
-    command: ["npx", "nest", "start", "collage"]
+    command: ["pnpm", "start:collage"]
 
   worker:
     build: .
@@ -21,7 +21,7 @@ services:
     volumes:
       - tmp:/app/tmp
     restart: always
-    command: ["npx", "nest", "start", "worker"]
+    command: ["pnpm", "start:worker"]
 
 
 volumes:
